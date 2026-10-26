@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RiskDNA — Your Investing Makeup, Decoded</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F4ECE1;
+    --red: #C8362B;
+    --red-dark: #a82a20;
+    --text: #1a1a1a;
+    --text-muted: #5a5a5a;
+    --card-bg: #ede4d7;
+    --border: #d9cfc3;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 60px 20px 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(56px, 14vw, 96px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 10px;
+  }
+
+  .tagline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 4vw, 22px);
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+    margin-bottom: 28px;
+  }
+
+  .intro {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text-muted);
+    text-align: left;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px 28px;
+  }
+
+  .intro p { margin-bottom: 10px; }
+  .intro p:last-child { margin-bottom: 0; }
+  .intro strong { color: var(--text); font-weight: 600; }
+
+  /* QUESTIONS */
+  .questions-section { margin-bottom: 40px; }
+
+  .section-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 24px;
+  }
+
+  .question-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 24px 20px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .question-card.unanswered {
+    border-color: var(--red);
+    animation: shake 0.35s ease;
+  }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 6px;
+  }
+
+  .q-text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--cream);
+    transition: all 0.18s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .option:hover {
+    border-color: var(--red);
+    background: #fdf5ee;
+  }
+
+  .option.selected {
+    background: var(--red);
+    border-color: var(--red);
+    color: #fff;
+  }
+
+  .option-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s;
+  }
+
+  .option.selected .option-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  /* SUBMIT */
+  .submit-wrap {
+    text-align: center;
+    margin: 40px 0;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 16px 40px;
+    border-radius: 100px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.18s, transform 0.1s;
+  }
+
+  .btn-primary:hover { background: var(--red-dark); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  .error-msg {
+    margin-top: 14px;
+    font-size: 14px;
+    color: var(--red);
+    font-weight: 500;
+    display: none;
+  }
+
+  /* RESULTS */
+  #results {
+    display: none;
+    margin-top: 60px;
+    border-top: 2px solid var(--border);
+    padding-top: 56px;
+  }
+
+  .result-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .result-type {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 11vw, 72px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .result-descriptor {
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+
+  /* ALLOCATION */
+  .allocation-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 28px;
+  }
+
+  .alloc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .alloc-bars { display: flex; flex-direction: column; gap: 12px; }
+
+  .alloc-row { display: flex; align-items: center; gap: 12px; }
+
+  .alloc-name {
+    font-size: 13px;
+    font-weight: 600;
+    width: 52px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  .alloc-bar-wrap {
+    flex: 1;
+    background: var(--border);
+    border-radius: 100px;
+    height: 12px;
+    overflow: hidden;
+  }
+
+  .alloc-bar {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 0.7s cubic-bezier(.4,0,.2,1);
+  }
+
+  .bar-equity { background: var(--red); }
+  .bar-debt { background: #8ba3b8; }
+  .bar-gold { background: #c9a84c; }
+
+  .alloc-pct {
+    font-size: 14px;
+    font-weight: 700;
+    width: 38px;
+    text-align: right;
+    flex-shrink: 0;
+    color: var(--text);
+  }
+
+  /* SCORE CARD */
+  .score-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 24px 24px;
+    margin-bottom: 28px;
+  }
+
+  .score-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .score-tiers {
+    display: flex;
+    gap: 0;
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 18px;
+    border: 1.5px solid var(--border);
+  }
+
+  .tier-seg {
+    flex: 1;
+    text-align: center;
+    padding: 9px 4px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--cream);
+    transition: all 0.2s;
+  }
+
+  .tier-seg.active {
+    background: var(--red);
+    color: #fff;
+  }
+
+  .score-breakdown {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .score-pill {
+    background: var(--cream);
+    border: 1.5px solid var(--border);
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .score-pill span { color: var(--red); }
+
+  /* JUSTIFICATION */
+  .justification {
+    margin-bottom: 36px;
+  }
+
+  .just-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  .just-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-muted);
+  }
+
+  .just-body p { margin-bottom: 14px; }
+  .just-body p:last-child { margin-bottom: 0; }
+  .just-body strong { color: var(--text); font-weight: 600; }
+
+  /* START OVER */
+  .restart-wrap { text-align: center; margin-top: 48px; }
+
+  .btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--red);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 36px;
+    border-radius: 100px;
+    border: 2px solid var(--red);
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: all 0.18s;
+  }
+
+  .btn-outline:hover { background: var(--red); color: #fff; }
+
+  /* TICKER STRIP */
+  .ticker {
+    background: var(--red);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 10px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 0;
+  }
+
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 28s linear infinite;
+  }
+
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @media (max-width: 480px) {
+    .header { padding: 40px 0 36px; }
+    .intro { padding: 18px 18px; }
+    .question-card { padding: 18px 16px 16px; }
+    .alloc-name { width: 44px; font-size: 12px; }
+    .score-tiers { flex-direction: column; border-radius: 16px; }
+    .tier-seg { border-radius: 0; padding: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker">
+  <span class="ticker-inner">
+    Risk Capacity &nbsp;★&nbsp; Emotional Tolerance &nbsp;★&nbsp; Decode Your Investor Type &nbsp;★&nbsp; Steady · Moderate · Bold &nbsp;★&nbsp; Risk Capacity &nbsp;★&nbsp; Emotional Tolerance &nbsp;★&nbsp; Decode Your Investor Type &nbsp;★&nbsp; Steady · Moderate · Bold &nbsp;★&nbsp;
+  </span>
+</div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">RiskDNA</div>
+    <div class="tagline">Your investing makeup, decoded.</div>
+    <div class="intro">
+      <p><strong>What it is:</strong> A short questionnaire that decodes how much investment risk suits you — both how much you can afford to take and how much you can emotionally handle.</p>
+      <p><strong>What it does:</strong> Answer 10 quick questions and you'll be matched to your investor type — <strong>Steady</strong>, <strong>Moderate</strong>, or <strong>Bold</strong> — each with a suggested way to split your money across stocks, bonds, and gold.</p>
+    </div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div class="questions-section" id="questionsSection">
+    <div class="section-label">10 Questions · No right or wrong answers</div>
+    <div id="questionsWrap"></div>
+  </div>
+
+  <!-- SUBMIT -->
+  <div class="submit-wrap">
+    <button class="btn-primary" onclick="handleSubmit()">Decode My RiskDNA →</button>
+    <div class="error-msg" id="errorMsg">Please answer all questions before continuing.</div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results">
+    <div class="result-label">Your RiskDNA</div>
+    <div class="result-type" id="resultType"></div>
+    <div class="result-descriptor" id="resultDescriptor"></div>
+
+    <div class="allocation-card">
+      <div class="alloc-title">Suggested Portfolio Allocation</div>
+      <div class="alloc-bars">
+        <div class="alloc-row">
+          <div class="alloc-name">Equity</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar bar-equity" id="barEquity" style="width:0%"></div></div>
+          <div class="alloc-pct" id="pctEquity">—</div>
+        </div>
+        <div class="alloc-row">
+          <div class="alloc-name">Debt</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar bar-debt" id="barDebt" style="width:0%"></div></div>
+          <div class="alloc-pct" id="pctDebt">—</div>
+        </div>
+        <div class="alloc-row">
+          <div class="alloc-name">Gold</div>
+          <div class="alloc-bar-wrap"><div class="alloc-bar bar-gold" id="barGold" style="width:0%"></div></div>
+          <div class="alloc-pct" id="pctGold">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-card">
+      <div class="score-title">Where You Fell</div>
+      <div class="score-tiers">
+        <div class="tier-seg" id="tierSteady">Steady · 10–19</div>
+        <div class="tier-seg" id="tierModerate">Moderate · 20–29</div>
+        <div class="tier-seg" id="tierBold">Bold · 30–40</div>
+      </div>
+      <div class="score-breakdown">
+        <div class="score-pill">Total: <span id="scoreTotal">—</span> / 40</div>
+        <div class="score-pill">Capacity: <span id="scoreCapacity">—</span> / 20</div>
+        <div class="score-pill">Tolerance: <span id="scoreTolerance">—</span> / 20</div>
+      </div>
+    </div>
+
+    <div class="justification">
+      <div class="just-title">What This Means for You</div>
+      <div class="just-body" id="justBody"></div>
+    </div>
+
+    <div class="restart-wrap">
+      <button class="btn-outline" onclick="restart()">Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    text: "How old are you?",
+    options: [
+      { label: "50 or older", pts: 1 },
+      { label: "40–49", pts: 2 },
+      { label: "30–39", pts: 3 },
+      { label: "Under 30", pts: 4 },
+    ]
+  },
+  {
+    text: "When will you need most of this money?",
+    options: [
+      { label: "Within 3 years", pts: 1 },
+      { label: "3–7 years", pts: 2 },
+      { label: "7–15 years", pts: 3 },
+      { label: "15+ years", pts: 4 },
+    ]
+  },
+  {
+    text: "How stable is your income?",
+    options: [
+      { label: "Irregular / unstable", pts: 1 },
+      { label: "Somewhat variable", pts: 2 },
+      { label: "Mostly stable", pts: 3 },
+      { label: "Very secure", pts: 4 },
+    ]
+  },
+  {
+    text: "Do people financially depend on you?",
+    options: [
+      { label: "Several dependents", pts: 1 },
+      { label: "One dependent", pts: 2 },
+      { label: "Not yet, but soon", pts: 3 },
+      { label: "No one", pts: 4 },
+    ]
+  },
+  {
+    text: "Do you have an emergency fund?",
+    options: [
+      { label: "None", pts: 1 },
+      { label: "Less than 3 months of expenses", pts: 2 },
+      { label: "3–6 months", pts: 3 },
+      { label: "More than 6 months", pts: 4 },
+    ]
+  },
+  {
+    text: "If your portfolio dropped 30% in a month, you would…",
+    options: [
+      { label: "Sell everything", pts: 1 },
+      { label: "Sell some", pts: 2 },
+      { label: "Hold and wait", pts: 3 },
+      { label: "Buy more", pts: 4 },
+    ]
+  },
+  {
+    text: "Which would you rather have?",
+    options: [
+      { label: "Steady 6% with little risk", pts: 1 },
+      { label: "Mostly steady, small swings", pts: 2 },
+      { label: "Higher returns, real swings", pts: 3 },
+      { label: "A shot at 15% with big swings", pts: 4 },
+    ]
+  },
+  {
+    text: "How much investing experience do you have?",
+    options: [
+      { label: "None", pts: 1 },
+      { label: "A little", pts: 2 },
+      { label: "Moderate", pts: 3 },
+      { label: "Experienced", pts: 4 },
+    ]
+  },
+  {
+    text: "Have you ever panic-sold, or bought something because everyone else was?",
+    options: [
+      { label: "Yes, often", pts: 1 },
+      { label: "Once or twice", pts: 2 },
+      { label: "Rarely", pts: 3 },
+      { label: "Never — I stick to a plan", pts: 4 },
+    ]
+  },
+  {
+    text: "How would you feel watching your investments swing in value every day?",
+    options: [
+      { label: "Very anxious", pts: 1 },
+      { label: "Uneasy", pts: 2 },
+      { label: "Mostly fine", pts: 3 },
+      { label: "Completely comfortable", pts: 4 },
+    ]
+  }
+];
+
+// answers[i] = selected option index (0-3) or null
+const answers = new Array(10).fill(null);
+
+function buildQuestions() {
+  const wrap = document.getElementById('questionsWrap');
+  wrap.innerHTML = '';
+  QUESTIONS.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `qcard-${qi}`;
+
+    const num = document.createElement('div');
+    num.className = 'q-number';
+    num.textContent = `Question ${qi + 1} of 10`;
+
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.textContent = q.text;
+
+    const opts = document.createElement('div');
+    opts.className = 'options';
+
+    q.options.forEach((opt, oi) => {
+      const btn = document.createElement('div');
+      btn.className = 'option';
+      btn.id = `opt-${qi}-${oi}`;
+      btn.innerHTML = `<div class="option-dot"></div>${opt.label}`;
+      btn.addEventListener('click', () => selectOption(qi, oi));
+      opts.appendChild(btn);
+    });
+
+    card.appendChild(num);
+    card.appendChild(text);
+    card.appendChild(opts);
+    wrap.appendChild(card);
+  });
+}
+
+function selectOption(qi, oi) {
+  answers[qi] = oi;
+  // clear all options for this question
+  QUESTIONS[qi].options.forEach((_, i) => {
+    const el = document.getElementById(`opt-${qi}-${i}`);
+    el.classList.remove('selected');
+  });
+  document.getElementById(`opt-${qi}-${oi}`).classList.add('selected');
+  // remove unanswered highlight
+  document.getElementById(`qcard-${qi}`).classList.remove('unanswered');
+}
+
+function getTierBand(score) {
+  // score range 5–20
+  if (score <= 9) return 0;   // Steady
+  if (score <= 14) return 1;  // Moderate
+  return 2;                   // Bold
+}
+
+const TYPES = ['Steady', 'Moderate', 'Bold'];
+
+function score() {
+  const pts = answers.map((ai, qi) => QUESTIONS[qi].options[ai].pts);
+  const capacityScore = pts.slice(0, 5).reduce((a, b) => a + b, 0);
+  const toleranceScore = pts.slice(5, 10).reduce((a, b) => a + b, 0);
+  const total = capacityScore + toleranceScore;
+
+  // Base type
+  let typeIdx;
+  if (total <= 19) typeIdx = 0;
+  else if (total <= 29) typeIdx = 1;
+  else typeIdx = 2;
+
+  const gates = [];
+
+  // Gate A: no emergency fund
+  if (pts[4] === 1) {
+    typeIdx = 0;
+    gates.push('A');
+  }
+
+  // Gate B: lower of two bands
+  const capBand = getTierBand(capacityScore);
+  const tolBand = getTierBand(toleranceScore);
+  if (capBand !== tolBand) {
+    const lowerBand = Math.min(capBand, tolBand);
+    if (lowerBand < typeIdx) {
+      typeIdx = lowerBand;
+      gates.push('B');
+    }
+  }
+
+  // Gate C: panic sell
+  if (pts[5] === 1) {
+    if (typeIdx > 0) typeIdx--;
+    gates.push('C');
+  }
+
+  return { typeIdx, total, capacityScore, toleranceScore, pts, gates };
+}
+
+function buildJustification(typeIdx, total, capacityScore, toleranceScore, pts, gates) {
+  const name = TYPES[typeIdx];
+  const capBand = getTierBand(capacityScore);
+  const tolBand = getTierBand(toleranceScore);
+  const capName = TYPES[capBand];
+  const tolName = TYPES[tolBand];
+
+  let p1 = `Your total score of <strong>${total} out of 40</strong> placed you in the <strong>${total <= 19 ? 'Steady (10–19)' : total <= 29 ? 'Moderate (20–29)' : 'Bold (30–40)'}</strong> range before any adjustments. `;
+  if (total <= 19) p1 += `A score in this band reflects a strong preference for stability — protecting what you have matters more to you right now than chasing higher returns, and that is a perfectly valid place to be.`;
+  else if (total <= 29) p1 += `A score in this band reflects a healthy balance: you're willing to accept real market swings in pursuit of growth, but not at the expense of peace of mind.`;
+  else p1 += `A score in this band reflects genuine appetite for long-term growth — you're comfortable with volatility and have the financial runway to ride it out.`;
+
+  let p2 = '';
+  if (capBand === tolBand) {
+    p2 = `Your <strong>risk capacity</strong> (how much you can afford to take — score: ${capacityScore}/20) and your <strong>emotional tolerance</strong> (how much you can handle psychologically — score: ${toleranceScore}/20) were well-aligned, both pointing to a ${capName} profile. That's a strong signal: the portfolio you're matched to is one you're likely to stick with when markets get rough.`;
+  } else {
+    const higher = capBand > tolBand ? 'capacity' : 'tolerance';
+    const lower = capBand > tolBand ? 'tolerance' : 'capacity';
+    const higherScore = capBand > tolBand ? capacityScore : toleranceScore;
+    const lowerScore = capBand > tolBand ? toleranceScore : capacityScore;
+    p2 = `Your <strong>risk capacity</strong> (score: ${capacityScore}/20) came in at a <strong>${capName}</strong> level, while your <strong>emotional tolerance</strong> (score: ${toleranceScore}/20) landed at <strong>${tolName}</strong>. Your ${higher} was higher — meaning you can technically handle more risk on paper — but your ${lower} pulled things back. RiskDNA always leans toward the lower of the two: the best portfolio is the one you'll actually stick with when the market drops 20% in a week, not the one that maximises return in a spreadsheet.`;
+  }
+
+  let p3 = '';
+  const gateTexts = [];
+  if (gates.includes('A')) {
+    gateTexts.push(`You currently have <strong>no emergency fund</strong>. Without a cash buffer covering at least 3 months of expenses, a market downturn could force you to sell investments at exactly the wrong moment — locking in losses. Building that buffer comes first. Even a Steady portfolio carries some volatility, so having that safety net is non-negotiable before committing more money to markets.`);
+  }
+  if (gates.includes('B') && !gates.includes('A')) {
+    gateTexts.push(`Because your capacity and tolerance pointed to different bands, RiskDNA used the lower of the two as your final type. This keeps your allocation realistic — a portfolio you might intellectually accept but emotionally panic-sell from isn't actually serving you.`);
+  }
+  if (gates.includes('C')) {
+    gateTexts.push(`Your answer about a sudden 30% portfolio drop — choosing to sell everything — flagged a real concern. Panic-selling during a downturn is one of the most costly investing mistakes: you lock in losses and miss the recovery. Your allocation has been kept a step more conservative to reduce the likelihood of that impulse being triggered.`);
+  }
+  if (gateTexts.length > 0) {
+    p3 = gateTexts.join(' ');
+  }
+
+  let p4 = '';
+  if (name === 'Steady') {
+    p4 = `Your <strong>Steady</strong> allocation — 30% Equity, 60% Debt, 10% Gold — is built to protect capital first. The heavy debt component cushions against market swings, while the equity slice still gives you real growth potential over time. Your most important next step: <strong>build or top up your emergency fund</strong> before anything else. Once that's in place, even a low-risk portfolio compounds meaningfully over years.`;
+  } else if (name === 'Moderate') {
+    p4 = `Your <strong>Moderate</strong> allocation — 60% Equity, 30% Debt, 10% Gold — balances real growth potential with downside protection. The equity majority means your portfolio will move with the market, but the debt component will dampen the worst swings. A great next step: <strong>set up an automatic monthly investment</strong> (a SIP or recurring transfer). Automating removes the temptation to time the market and builds wealth quietly in the background.`;
+  } else {
+    p4 = `Your <strong>Bold</strong> allocation — 80% Equity, 15% Debt, 5% Gold — is designed for maximum long-term compounding. You'll see real swings — 20–30% drawdowns are normal and expected — but your time horizon and emotional makeup mean you can ride them out. The key is <strong>staying the course</strong>. Consider automating your investments and checking your portfolio no more than quarterly. The most dangerous thing a Bold investor can do is react to short-term noise.`;
+  }
+
+  return [p1, p2, p3, p4].filter(Boolean);
+}
+
+function handleSubmit() {
+  const unanswered = answers.map((a, i) => a === null ? i : -1).filter(i => i >= 0);
+
+  if (unanswered.length > 0) {
+    const err = document.getElementById('errorMsg');
+    err.style.display = 'block';
+    unanswered.forEach(qi => {
+      const card = document.getElementById(`qcard-${qi}`);
+      card.classList.remove('unanswered');
+      void card.offsetWidth;
+      card.classList.add('unanswered');
+    });
+    document.getElementById(`qcard-${unanswered[0]}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  document.getElementById('errorMsg').style.display = 'none';
+
+  const { typeIdx, total, capacityScore, toleranceScore, pts, gates } = score();
+  const name = TYPES[typeIdx];
+
+  // Populate results
+  document.getElementById('resultType').textContent = name;
+
+  const descriptors = {
+    Steady: 'Protect capital first — calm, low-swing growth.',
+    Moderate: 'Balanced growth with measured risk.',
+    Bold: 'Maximise long-term growth and ride the swings.'
+  };
+  document.getElementById('resultDescriptor').textContent = descriptors[name];
+
+  const allocs = {
+    Steady:   { equity: 30, debt: 60, gold: 10 },
+    Moderate: { equity: 60, debt: 30, gold: 10 },
+    Bold:     { equity: 80, debt: 15, gold: 5  }
+  };
+  const alloc = allocs[name];
+
+  setTimeout(() => {
+    document.getElementById('barEquity').style.width = alloc.equity + '%';
+    document.getElementById('barDebt').style.width = alloc.debt + '%';
+    document.getElementById('barGold').style.width = alloc.gold + '%';
+  }, 120);
+
+  document.getElementById('pctEquity').textContent = alloc.equity + '%';
+  document.getElementById('pctDebt').textContent = alloc.debt + '%';
+  document.getElementById('pctGold').textContent = alloc.gold + '%';
+
+  document.getElementById('scoreTotal').textContent = total;
+  document.getElementById('scoreCapacity').textContent = capacityScore;
+  document.getElementById('scoreTolerance').textContent = toleranceScore;
+
+  ['Steady', 'Moderate', 'Bold'].forEach((t, i) => {
+    const el = document.getElementById(`tier${t}`);
+    el.classList.toggle('active', i === typeIdx);
+  });
+
+  const paras = buildJustification(typeIdx, total, capacityScore, toleranceScore, pts, gates);
+  document.getElementById('justBody').innerHTML = paras.map(p => `<p>${p}</p>`).join('');
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  setTimeout(() => resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+}
+
+function restart() {
+  answers.fill(null);
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('barEquity').style.width = '0%';
+  document.getElementById('barDebt').style.width = '0%';
+  document.getElementById('barGold').style.width = '0%';
+  buildQuestions();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+buildQuestions();
+</script>
+</body>
+</html>
